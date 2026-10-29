@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Student Profile Banner -->
+<div class="yzy-card-dark mb-5">
+    <div class="mono-tag text-muted mb-1">STUDENT PORTAL // PROFILE SPEC</div>
+    <h1 class="display-5 text-uppercase mb-3">{{ current_user.first_name }} {{ current_user.last_name }}</h1>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <span class="mono-tag d-block text-muted">REGISTRATION NO</span>
+            <strong class="text-black fs-5">{{ current_user.registration_no }}</strong>
+        </div>
+        <div class="col-md-4">
+            <span class="mono-tag d-block text-muted">EMAIL ADDRESS</span>
+            <strong class="text-black fs-5">{{ current_user.email }}</strong>
+        </div>
+        <div class="col-md-4">
+            <span class="mono-tag d-block text-muted">ACADEMIC STATUS</span>
+            <strong class="text-black fs-5">ACTIVE // SEM 1</strong>
+        </div>
+    </div>
+</div>
+
+<div class="row g-5">
+    <!-- Left Column: Academic Transcript -->
+    <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="m-0">ACADEMIC TRANSCRIPT</h3>
+            <span class="mono-tag">AY 2025/2026 // SEM 1</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered border-dark align-middle">
+                <thead class="table-dark text-uppercase">
+                    <tr>
+                        <th>CODE</th>
+                        <th>UNIT TITLE</th>
+                        <th>CAT (30)</th>
+                        <th>EXAM (70)</th>
+                        <th>TOTAL</th>
+                        <th>GRADE</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for grade in grades %}
+                    <tr>
+                        <td class="fw-bold">{{ grade.unit.code }}</td>
+                        <td>{{ grade.unit.title }}</td>
+                        <td>{{ grade.cat_score if grade.cat_score is not none else 'INC' }}</td>
+                        <td>{{ grade.exam_score if grade.exam_score is not none else 'INC' }}</td>
+                        <td class="fw-bold">{{ grade.total_score if grade.total_score is not none else 'INC' }}</td>
+                        <td>
+                            {% if grade.letter_grade == 'INC' %}
+                                <span class="badge bg-danger rounded-0">INC</span>
+                            {% else %}
+                                <span class="badge bg-dark rounded-0">{{ grade.letter_grade }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted mono-tag">NO GRADE RECORDS FOUND</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Missing Marks Claims Table -->
+        <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+            <h3 class="m-0">MISSING MARK CLAIMS</h3>
+            <span class="mono-tag">CLAIM HISTORY</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered border-dark align-middle">
+                <thead class="table-dark text-uppercase">
+                    <tr>
+                        <th>CLAIM REF</th>
+                        <th>UNIT</th>
+                        <th>TYPE</th>
+                        <th>STATUS</th>
+                        <th>FILED DATE</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for claim in claims %}
+                    <tr>
+                        <td class="fw-bold mono-tag">{{ claim.claim_no }}</td>
+                        <td>{{ claim.unit.code }}</td>
+                        <td>{{ claim.assessment_type }}</td>
+                        <td>
+                            {% if claim.status == 'PENDING' %}
+                                <span class="badge bg-warning text-dark rounded-0">PENDING</span>
+                            {% elif claim.status == 'RESOLVED' %}
+                                <span class="badge bg-success rounded-0">RESOLVED</span>
+                            {% elif claim.status == 'REJECTED' %}
+                                <span class="badge bg-danger rounded-0">REJECTED</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-0">{{ claim.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="small">{{ claim.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted mono-tag">NO FILED CLAIMS</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Right Column: Submit Missing Mark Claim Form -->
+    <div class="col-lg-5">
+        <div class="yzy-card">
+            <div class="mono-tag mb-1">FILE CLAIM // MISSING MARK</div>
+            <h3 class="mb-4">SUBMIT RESOLUTION REQUEST</h3>
+
+            <form method="POST" action="{{ url_for('main.submit_claim') }}">
+                <div class="mb-3">
+                    <label class="mono-tag mb-2 d-block">SELECT UNIT</label>
+                    <select name="unit_id" class="form-control" required>
+                        <option value="" disabled selected>-- CHOOSE COURSE --</option>
+                        {% for unit in units %}
+                            <option value="{{ unit.id }}">{{ unit.code }} - {{ unit.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="mono-tag mb-2 d-block">ACADEMIC YEAR</label>
+                        <input type="text" name="academic_year" class="form-control" value="2025/2026" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="mono-tag mb-2 d-block">SEMESTER</label>
+                        <select name="semester" class="form-control" required>
+                            <option value="SEM 1" selected>SEM 1</option>
+                            <option value="SEM 2">SEM 2</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="mono-tag mb-2 d-block">ASSESSMENT TYPE</label>
+                    <select name="assessment_type" class="form-control" required>
+                        <option value="EXAM">EXAM (FINAL)</option>
+                        <option value="CAT">CAT / CONTINUOUS</option>
+                        <option value="BOTH">BOTH (CAT & EXAM)</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="mono-tag mb-2 d-block">CLAIM DESCRIPTION / DETAILS</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Provide exam room, date, attendance sheet ref, or lecturer comments..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-yzy-dark w-100 py-3">TRANSMIT CLAIM</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

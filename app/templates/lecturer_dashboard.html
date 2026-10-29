@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="p-5 mb-4 bg-light rounded-3 border">
+        <h1 class="display-6 fw-bold">Lecturer Portal</h1>
+        <p class="lead">Welcome, Dr. {{ current_user.last_name }}</p>
+        <hr class="my-4">
+        <p>Manage unit allocations, enter student marks, and submit missing marks resolution requests.</p>
+    </div>
+</div>
+{% endblock %}

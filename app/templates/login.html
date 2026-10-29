@@ -1,0 +1,173 @@
+{%extends "base.html"%}
+
+{% block title %} Strawberry Park{% endblock %}
+{%  block content %}
+
+<main class="sp-entry-page" id="spEntryPage">
+
+    <section class="sp-intro" id="spIntro" aria-label="Strawberry Park introduction">
+
+        <div class="sp-intro-top">
+            <span>SP./ UNIVERSITY PORTAL</span>
+            <span>STUDENTS & STAFF</span>
+        </div>
+
+
+    <button
+            class="sp-intro-title"
+            id="spEnterButton"
+            type="button"
+            aria-label="Enter Strawberry Park and open the login form"
+        >
+        <span class="sp-intro-word"> STRAWBERRY</span>
+        <span class="sp-intro-subtitle"> P A R K </span>
+    </button>
+
+    <button
+        class="sp-enter-prompt"
+        id="spEnterPrompt"
+        type="button"
+
+    >
+    <span class="sp-enter-dot" aria-hidden="true"></span>
+        
+    </button>
+
+    <div class="sp-intro-bottom">
+        <span>SP.</span>
+        <span>EST 2027</span>
+    </div>
+
+
+    </section>
+
+
+    <!--LOGIN-->
+    <section class="sp-login-screen" id="spLoginScreen" aria-label="sign in">
+        <div class="sp-login-wrapper">
+
+
+            <div class="sp-login-heading text-center">
+                <span class="sp-tag">STUDENT & STAFF PORTAL</span>
+                <h1 class="mt-3 mb-2">Welcome</h1>
+                <p>Sign in to Strawberry Park</p>
+            </div>
+
+            <div class="sp-login-card">
+                <div class="sp-login-header text-center">
+
+                    <span class="sp-login-mark">sp.</span>
+                    <h2>Sign in</h2>
+                    <p>Enter your credentials</p>
+                </div>
+
+                <form action="{{url_for('main.login')}}" method="POST">
+
+                    <div class="sp-input-group">
+
+                        <span class="sp-input-icon" aria-hidden="true">
+                            <svg viewbox="0 0 24 24" fill="none">
+                                <circle 
+                                cx="12"
+                                cy="8"
+                                r="4">
+                            </circle>
+                            <path
+                            d="M4.5 21a7.5 7.5 0 0 1 15 0"
+                            
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"></path>
+                            </svg>
+
+                        </span>
+
+                        <input
+                            type="text"
+                            id="registration_no"
+                            name="registration_no"
+                            placeholder="registration"
+                            aria-label="rRegistration number"
+                            autocomplete="username"
+                            required>
+                    </div>
+                    <div class="sp-input-group">
+                        <span class="sp-input-icon" aria-hidden="true">
+                            <svg  viewBox="0 0 24 24" fill="none">
+                                <rect
+                                x="4"
+                                y="10"
+                                width="16"
+                                height="11"
+                                rx="2.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"></rect>
+                            <path
+                            d="M8 10V7a4 0 0 1 8 0v3"
+                            stroke="currentColor"
+                            stroke-width="1.7">
+                        </path>
+                    <circle 
+                        cx="12"
+                        cy="15"
+                        r="1.2"
+                        fill="currentColor">
+                    </circle>
+                            </svg>
+                        </span>
+                        <input type="password"
+                        id="password"
+                        name="password"
+                        placeholder="password"
+                        aria-label="password"
+                        autocomplete="current-password"
+                        required>
+                    </div>
+
+
+                    <button type="submit" class="sp-login-button">
+                        <span class="text-center">SIGN IN</span>
+                        
+                    </button>
+                </form>
+                <div class="sp-login-footer text-center">
+                    <span>Don't have an account?</span>
+                    <a href="{{url_for('main.register')}}">Register here</a>
+                </div>
+            </div>
+            <p class="sp-login-caption">
+                STRAWBERRY PARK x UNIVERSITY PORTAL
+            </p>
+        </div>
+    </section>
+</main>
+
+{%endblock%}
+{% block extra_js%}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const entryPage = document.getElementById("spEntryPage");
+        const enterButton = document.getElementById("spEnterButton");
+        const enterPrompt = document.getElementById("spEnterPrompt");
+        const registrationInput = document.getElementById("registration_no");
+
+        function enterPortal() {
+            if (entryPage.classList.contains("sp-entered")) {
+                return;
+            }
+
+            entryPage.classList.add("sp-entered");
+            window.setTimeout(function () {
+                if (registrationInput) {
+                    registrationInput.focus();
+                }
+            }, 850);
+        }
+
+        enterButton.addEventListener("click", enterPortal);
+        enterPrompt.addEventListener("click", enterPortal);
+    });
+</script>
+
+{% endblock %}
