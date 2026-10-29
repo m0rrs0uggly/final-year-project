@@ -181,7 +181,7 @@ class AttendanceSession(db.Model):
 
     unit_id = db.Column(
         db.Integer,
-        db.ForeignKey('unit.id'),
+        db.ForeignKey('units.id'),
         nullable = False
     )
 
@@ -227,10 +227,12 @@ class AttendanceSession(db.Model):
 
 
 
-class AttendanceRcord(db.Model):
+class AttendanceRecord(db.Model):
     __tablename__ = 'attendance_records'
 
-    id = db.Column(
+    id = db.Column(db.Integer, primary_key=True)
+
+    session_id = db.Column(
         db.Integer,
         db.ForeignKey('attendance_sessions.id'),
         nullable=False
@@ -245,18 +247,23 @@ class AttendanceRcord(db.Model):
     marked_at = db.Column(
         db.DateTime,
         nullable=False,
-        default = datetime.utcnow
+        default=datetime.utcnow
     )
 
-    __table_args__ =(
+    __table_args__ = (
         db.UniqueConstraint(
             'session_id',
             'student_id',
-            name= 'unique_student_attendance_per_session'
+            name='unique_student_attendance_per_session'
         ),
     )
 
-    session=db.relationship(
+    session = db.relationship(
         'AttendanceSession',
+        backref=db.backref('attendance_records', lazy=True)
+    )
+    student = db.relationship(
+        'User',
+        foreign_keys=[student_id],
         backref=db.backref('attendance_records', lazy=True)
     )

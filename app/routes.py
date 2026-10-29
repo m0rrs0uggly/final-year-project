@@ -90,8 +90,15 @@ def register():
 def student_dashboard():
 
     grades = Grade.query.filter_by(student_id=current_user.id).all()
+
     claims = MissingMarkClaim.query.filter_by(student_id=current_user.id).all()
+
     units = Unit.query.all()# claim submission dropdwon
+
+    #retrive this student attendance records
+    attendance_records = AttendanceRecord.query.filter_by(
+        student_id=current_user.id
+    ).all
     return render_template('student_dashboard.html', user=current_user, grades=grades, claims=claims, units=units)
 
 @main_bp.route('/student/submit_claim', methods=['POST'])
@@ -108,16 +115,15 @@ def submit_claim():
         flash('All fields are required to submit a claim.', 'danger')
         return redirect(url_for('main.student_dashboard'))
 
-    new_claim = MissingMarkClaim(
-        claim_no=MissingMarkClaim.generate_claim_no(),
-        student_id=current_user.id,
-        unit_id=unit_id,
-        academic_year=academic_year,
-        semester=semester,
-        assessment_type=assessment_type,
-        description=description,
-        status='PENDING'
-    )
+    new_claim = MissingMarkClaim()
+    new_claim.claim_no = MissingMarkClaim.generate_claim_no()
+    new_claim.unit_id = unit_id
+    new_claim.academic_year = academic_year
+    new_claim.semester = semester
+    new_claim.assessment_type = assessment_type
+    new_claim.description = description
+    new_claim.status = 'PENDING'
+    new_claim.student_id = current_user.id
     db.session.add(new_claim)
     db.session.commit()
     flash('Your missing mark claim has been submitted successfully!', 'success')

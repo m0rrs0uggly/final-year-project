@@ -111,7 +111,50 @@
             </table>
         </div>
     </div>
+<!--student attendance-->
 
+<div class="d-flex justify-content-center-between align-items-center mt-5 mb-3">
+    <h3 class="m-0">MY ATTENDANCE</h3>
+    <span class="mono-tag">ATTENDANCE HISTORY</span>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered border-dark align-middle">
+        <thead class="table-dark text-uppercase">
+            <tr>
+                <th>UNIT</th>
+                <th>SESSION DATE</th>
+                <th>TIME MARKED</th>
+                <th>STATUS</th>
+
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            {% for record in attendance_records%}
+            <tr>
+                <td class="fw-bold">
+                    {{ record.session.unit.code}}
+                </td>
+
+                <td>
+                    {{record.marked_at.strftime('%Y-%m-%d')}}
+                </td>
+
+                <td>
+                    {{record.marked_at.strftime('%H:%M')}}
+                </td>
+                <td>
+                    <span class="badge bg-success rounded-0">PRESENT</span>
+                </td>
+            </tr>
+            {%else%}
+            <tr>
+                <td colspan="4" class="text-center py-4 text-muted mono-tag">NO ATTENDANCE RECORDS FOUND</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
     <!-- Right Column: Submit Missing Mark Claim Form -->
     <div class="col-lg-5">
         <div class="yzy-card">
@@ -162,4 +205,7 @@
         </div>
     </div>
 </div>
+
+
+
 {% endblock %}
